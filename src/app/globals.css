@@ -1,26 +1,187 @@
+/* ============================================================
+   Tailwind v4 boot — ORDER IS CRITICAL
+   1. @theme with HARDCODED values (no CSS variables) MUST come
+      BEFORE @import "tailwindcss" so Tailwind's utility generator
+      picks them up. CSS variables are processed AFTER import,
+      causing utilities like bg-card to output empty properties.
+   2. @source defines which files Tailwind scans for classnames.
+   3. @import "tailwindcss" triggers the actual compilation pass.
+   4. Then @theme inline maps CSS variables for runtime theming
+      (light/dark class swap at browser level).
+   ============================================================ */
+
+/* --- 1. Base theme values (hardcoded, consumed by Tailwind compiler) --- */
+@theme {
+  --color-background: #ffffff;
+  --color-foreground: #0f172a;
+  --color-card: #ffffff;
+  --color-card-foreground: #0f172a;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0f172a;
+  --color-primary: #4f46e5;
+  --color-primary-foreground: #ffffff;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-ring: #6366f1;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --font-sans: "Inter", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", "Source Code Pro", Menlo, Consolas, monospace;
+
+  --shadow-static: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  --shadow-floating: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+}
+
+/* --- 2. Content scan paths (Turbopack src/ cannot be auto-discovered otherwise) --- */
+@source "../app/**/*.{ts,tsx,js,jsx,mdx}";
+@source "../components/**/*.{ts,tsx,js,jsx,mdx}";
+@source "../hooks/**/*.{ts,tsx,js,jsx,mdx}";
+@source "../stores/**/*.{ts,tsx,js,jsx,mdx}";
+@source "../lib/**/*.{ts,tsx,js,jsx,mdx}";
+
+/* --- 3. Tailwind core + animate --- */
 @import "tailwindcss";
+@import "tw-animate-css";
+
+/* ============================================================
+   Runtime theming (light/dark swap)
+   When .dark is added to <html>, override the CSS variables
+   that @theme inline exposes.
+   ============================================================ */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary-50: #eef2ff;
+  --primary-100: #e0e7ff;
+  --primary-200: #c7d2fe;
+  --primary-300: #a5b4fc;
+  --primary-400: #818cf8;
+  --primary-500: #6366f1;
+  --primary-600: #4f46e5;
+  --primary-700: #4338ca;
+  --primary-800: #3730a3;
+  --primary-900: #312e81;
+  --primary-950: #1e1b4b;
+
+  --neutral-50: #f8fafc;
+  --neutral-100: #f1f5f9;
+  --neutral-200: #e2e8f0;
+  --neutral-300: #cbd5e1;
+  --neutral-400: #94a3b8;
+  --neutral-500: #64748b;
+  --neutral-600: #475569;
+  --neutral-700: #334155;
+  --neutral-800: #1e293b;
+  --neutral-900: #0f172a;
+  --neutral-950: #020617;
+
+  --state-success-bg: #d1fae5;
+  --state-warning-bg: #fef3c7;
+  --state-error-bg: #fee2e2;
+  --state-info-bg: #dbeafe;
+
+  --studio-background: #ffffff;
+  --studio-foreground: #0f172a;
+  --studio-card: #ffffff;
+  --studio-card-foreground: #0f172a;
+  --studio-popover: #ffffff;
+  --studio-popover-foreground: #0f172a;
+  --studio-primary: #4f46e5;
+  --studio-primary-foreground: #ffffff;
+  --studio-muted: #f1f5f9;
+  --studio-muted-foreground: #64748b;
+  --studio-border: #e2e8f0;
+  --studio-input: #e2e8f0;
+  --studio-ring: #6366f1;
+  --studio-radius-small: 4px;
+  --studio-radius-medium: 8px;
+  --studio-radius-large: 12px;
+  --studio-overlay: rgba(15, 23, 42, 0.48);
+  --studio-destructive: #ef4444;
+  --studio-destructive-foreground: #ffffff;
 }
 
+.dark {
+  --studio-background: #0f172a;
+  --studio-foreground: #f8fafc;
+  --studio-card: #1e293b;
+  --studio-card-foreground: #f8fafc;
+  --studio-popover: #1e293b;
+  --studio-popover-foreground: #f8fafc;
+  --studio-primary: #818cf8;
+  --studio-primary-foreground: #0f172a;
+  --studio-muted: #1e293b;
+  --studio-muted-foreground: #94a3b8;
+  --studio-border: #334155;
+  --studio-input: #334155;
+  --studio-ring: #818cf8;
+  --studio-radius-small: 4px;
+  --studio-radius-medium: 8px;
+  --studio-radius-large: 12px;
+  --studio-overlay: rgba(2, 6, 23, 0.72);
+  --studio-destructive: #ef4444;
+  --studio-destructive-foreground: #ffffff;
+}
+
+/* Bridge @theme → CSS variables for runtime light/dark swap.
+   When the browser adds .dark to <html>, the CSS variables change,
+   and these @theme inline bindings propagate the change. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--studio-background);
+  --color-foreground: var(--studio-foreground);
+  --color-card: var(--studio-card);
+  --color-card-foreground: var(--studio-card-foreground);
+  --color-popover: var(--studio-popover);
+  --color-popover-foreground: var(--studio-popover-foreground);
+  --color-primary: var(--studio-primary);
+  --color-primary-foreground: var(--studio-primary-foreground);
+  --color-muted: var(--studio-muted);
+  --color-muted-foreground: var(--studio-muted-foreground);
+  --color-border: var(--studio-border);
+  --color-input: var(--studio-input);
+  --color-ring: var(--studio-ring);
+  --color-destructive: var(--studio-destructive);
+  --color-destructive-foreground: var(--studio-destructive-foreground);
+  --radius-sm: var(--studio-radius-small);
+  --radius-md: var(--studio-radius-medium);
+  --radius-lg: var(--studio-radius-large);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html.light,
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--studio-background);
+    color: var(--studio-foreground);
+    min-height: 100vh;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Hide scrollbar util (shared with design稿) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
